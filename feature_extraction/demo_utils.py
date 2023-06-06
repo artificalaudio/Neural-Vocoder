@@ -21,44 +21,14 @@ import torchvision.transforms.functional as F
 from omegaconf.omegaconf import OmegaConf
 from sample_visualization import (load_feature_extractor,
                                   load_model_from_config, load_vocoder)
-from specvqgan.data.vggsound import CropFeats
-from specvqgan.util import download, md5_hash
-from specvqgan.models.cond_transformer import disabled_train
-from train import instantiate_from_config
+# from specvqgan.data.vggsound import CropFeats
+# from specvqgan.util import download, md5_hash
+# from specvqgan.models.cond_transformer import disabled_train
+# from train import instantiate_from_config
 
 from feature_extraction.extract_mel_spectrogram import get_spectrogram
 
 plt.rcParams['savefig.bbox'] = 'tight'
-
-
-def which_ffmpeg() -> str:
-    '''Determines the path to ffmpeg library
-
-    Returns:
-        str -- path to the library
-    '''
-    result = subprocess.run(['which', 'ffmpeg'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    ffmpeg_path = result.stdout.decode('utf-8').replace('\n', '')
-    return ffmpeg_path
-
-def which_ffprobe() -> str:
-    '''Determines the path to ffprobe library
-
-    Returns:
-        str -- path to the library
-    '''
-    result = subprocess.run(['which', 'ffprobe'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    ffprobe_path = result.stdout.decode('utf-8').replace('\n', '')
-    return ffprobe_path
-
-
-def check_video_for_audio(path):
-    assert which_ffprobe() != '', 'Is ffmpeg installed? Check if the conda environment is activated.'
-    cmd = f'{which_ffprobe()} -loglevel error -show_entries stream=codec_type -of default=nw=1 {path}'
-    result = subprocess.run(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    result = result.stdout.decode('utf-8')
-    print(result)
-    return 'codec_type=audio' in result
 
 def get_duration(path):
     assert which_ffprobe() != '', 'Is ffmpeg installed? Check if the conda environment is activated.'
@@ -67,50 +37,6 @@ def get_duration(path):
     result = subprocess.run(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     duration = float(result.stdout.decode('utf-8').replace('\n', ''))
     return duration
-
-def trim_video(video_path: str, start: int, trim_duration: int = 10, tmp_path: str = './tmp'):
-    assert which_ffmpeg() != '', 'Is ffmpeg installed? Check if the conda environment is activated.'
-    if Path(video_path).suffix != '.mp4':
-        print(f'File Extension is not `mp4` (it is {Path(video_path).suffix}). It will be re-encoded to mp4.')
-
-    video_duration = get_duration(video_path)
-    print('Video Duration:', video_duration)
-    assert video_duration > start, f'Video Duration < Trim Start: {video_duration} < {start}'
-
-    # create tmp dir if doesn't exist
-    os.makedirs(tmp_path, exist_ok=True)
-    trim_vid_path = os.path.join(tmp_path, f'{Path(video_path).stem}_trim_to_{trim_duration}s.mp4')
-    cmd = f'{which_ffmpeg()} -hide_banner -loglevel panic' \
-          f' -i {video_path} -ss {start} -t {trim_duration} -y {trim_vid_path}'
-    subprocess.call(cmd.split())
-    print('Trimmed the input video', video_path, 'and saved the output @', trim_vid_path)
-
-    return trim_vid_path
-
-
-def reencode_video_with_diff_fps(video_path: str, tmp_path: str, extraction_fps: int) -> str:
-    '''Reencodes the video given the path and saves it to the tmp_path folder.
-
-    Args:
-        video_path (str): original video
-        tmp_path (str): the folder where tmp files are stored (will be appended with a proper filename).
-        extraction_fps (int): target fps value
-
-    Returns:
-        str: The path where the tmp file is stored. To be used to load the video from
-    '''
-    assert which_ffmpeg() != '', 'Is ffmpeg installed? Check if the conda environment is activated.'
-    # assert video_path.endswith('.mp4'), 'The file does not end with .mp4. Comment this if expected'
-    # create tmp dir if doesn't exist
-    os.makedirs(tmp_path, exist_ok=True)
-
-    # form the path to tmp directory
-    new_path = os.path.join(tmp_path, f'{Path(video_path).stem}_new_fps.mp4')
-    cmd = f'{which_ffmpeg()} -hide_banner -loglevel panic '
-    cmd += f'-y -i {video_path} -filter:v fps=fps={extraction_fps} {new_path}'
-    subprocess.call(cmd.split())
-
-    return new_path
 
 def maybe_download_model(model_name: str, log_dir: str) -> str:
     name2info = {
