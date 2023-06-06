@@ -6,7 +6,7 @@ Original project:
 • [[ArXiv](http://arxiv.org/abs/2110.08791)]
 •
 <!-- 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1pxTIMweAKApJZ3ZFqyBee3HtMqFpnwQ0?usp=sharing) -->
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)]([https://colab.research.google.com/drive/1pxTIMweAKApJZ3ZFqyBee3HtMqFpnwQ0?usp=sharing](https://github.com/artificalaudio/Neural-Vocoder/blob/main/VocoderDemo.ipynb)) -->
 
 Purpose of this is educational. A simple demo showing how a mel spectrogram can be transformed via a neural vocoder into audio. 
 
