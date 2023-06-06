@@ -17,7 +17,7 @@ import torchvision
 import yaml
 from omegaconf import OmegaConf
 
-from specvqgan.util import get_ckpt_path
+# from specvqgan.util import get_ckpt_path
 
 sys.path.insert(0, '.')  # nopep8
 import matplotlib.pyplot as plt
