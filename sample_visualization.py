@@ -25,7 +25,7 @@ import soundfile
 from torch.utils.data.dataloader import default_collate
 
 from feature_extraction.extract_mel_spectrogram import inv_transforms
-from train import instantiate_from_config
+#from train import instantiate_from_config
 from vocoder.modules import Generator
 
 
