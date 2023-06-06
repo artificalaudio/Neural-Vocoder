@@ -30,6 +30,36 @@ from feature_extraction.extract_mel_spectrogram import get_spectrogram
 
 plt.rcParams['savefig.bbox'] = 'tight'
 
+def which_ffmpeg() -> str:
+    '''Determines the path to ffmpeg library
+
+    Returns:
+        str -- path to the library
+    '''
+    result = subprocess.run(['which', 'ffmpeg'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    ffmpeg_path = result.stdout.decode('utf-8').replace('\n', '')
+    return ffmpeg_path
+
+def which_ffprobe() -> str:
+    '''Determines the path to ffprobe library
+
+    Returns:
+        str -- path to the library
+    '''
+    result = subprocess.run(['which', 'ffprobe'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    ffprobe_path = result.stdout.decode('utf-8').replace('\n', '')
+    return ffprobe_path
+
+
+def check_video_for_audio(path):
+    assert which_ffprobe() != '', 'Is ffmpeg installed? Check if the conda environment is activated.'
+    cmd = f'{which_ffprobe()} -loglevel error -show_entries stream=codec_type -of default=nw=1 {path}'
+    result = subprocess.run(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    result = result.stdout.decode('utf-8')
+    print(result)
+    return 'codec_type=audio' in result
+
+
 def get_duration(path):
     assert which_ffprobe() != '', 'Is ffmpeg installed? Check if the conda environment is activated.'
     cmd = f'{which_ffprobe()} -hide_banner -loglevel panic' \
