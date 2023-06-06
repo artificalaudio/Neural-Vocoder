@@ -8,6 +8,8 @@ Original project:
 <!-- 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1pxTIMweAKApJZ3ZFqyBee3HtMqFpnwQ0?usp=sharing) -->
 
+Purpose of this is educational. A simple demo showing how a mel spectrogram can be transformed via a neural vocoder into audio. 
+
 <!-- <img src="https://github.com/v-iashin/v-iashin.github.io/raw/master/images/specvqgan/specvqgan_vggsound_samples.jpg" alt="Generated Samples Using our Model" width="900"> -->
 
 # Citation
