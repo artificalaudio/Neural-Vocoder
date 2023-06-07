@@ -197,9 +197,8 @@ def get_spectrum(audio_path, length):
     else:
         y = wav[:length]
 
-    mel_spec = TRANSFORMS(y)
-    mel_spec = 2 * mel_spec - 1    
-    return mel_spec
+    mel_spec = TRANSFORMS(y)   
+    return y, mel_spec
 
 if __name__ == '__main__':
     paser = argparse.ArgumentParser()
