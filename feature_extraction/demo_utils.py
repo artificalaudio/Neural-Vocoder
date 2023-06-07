@@ -305,10 +305,22 @@ def extract_melspectrogram(in_path: str, sr: int, duration: int = 10, tmp_path: 
         audio_raw = os.path.join(tmp_path, f'{Path(in_path).stem}.wav')
         cmd = f'{which_ffmpeg()} -i {in_path} -hide_banner -loglevel panic -f wav -vn -y {audio_raw}'
         subprocess.call(cmd.split())
-        
-def extract_spectrogram(in_path: str, sr: int) -> np.ndarray:
-    '''Extract Melspectrogram similar to RegNet.'''
+    # Extract audio from a video
+    audio_new = os.path.join(tmp_path, f'{Path(in_path).stem}_{sr}hz.wav')
+    cmd = f'{which_ffmpeg()} -i {audio_raw} -hide_banner -loglevel panic -ac 1 -ab 16k -ar {sr} -y {audio_new}'
+    subprocess.call(cmd.split())
+
     length = int(duration * sr)
+    audio_zero_pad, spec = get_spectrogram(audio_new, save_dir=None, length=length, save_results=False)
+
+    # specvqgan expects inputs to be in [-1, 1] but spectrograms are in [0, 1]
+    spec = 2 * spec - 1
+
+    return spec
+        
+def extract_spectrogram(in_path: str, duration: int = 10) -> np.ndarray:
+    '''Extract Melspectrogram similar to RegNet.'''
+    length = int(duration)
     audio_zero_pad, spec = get_spectrum(in_path, length=length)
 
     # specvqgan expects inputs to be in [-1, 1] but spectrograms are in [0, 1]
