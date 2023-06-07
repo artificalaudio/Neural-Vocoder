@@ -307,7 +307,7 @@ def extract_melspectrogram(in_path: str, sr: int, duration: int = 10, tmp_path: 
         subprocess.call(cmd.split())
 
     # Extract audio from a video
-    audio_new = os.path.join(tmp_path, f'{Path(in_path).stem}_{sr}hz.wav')
+    audio_new = os.path.join(tmp_path, f'_{Path(in_path).stem}.wav')
     cmd = f'{which_ffmpeg()} -i {audio_raw} -hide_banner -loglevel panic -ac 1 -ab 16k -ar {sr} -y {audio_new}'
     subprocess.call(cmd.split())
 
