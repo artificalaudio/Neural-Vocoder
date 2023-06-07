@@ -172,19 +172,20 @@ def get_spectrogram(audio_path, save_dir, length, folder_name='melspec_10s_22050
     else:
         y = wav[:length]
 
-    if folder_name == 'melspec_10s_22050hz':
-        print('using', folder_name)
-        mel_spec = TRANSFORMS(y)
-    else:
-        raise NotImplementedError
+#     if folder_name == 'melspec_10s_22050hz':
+#         print('using', folder_name)
+#         mel_spec = TRANSFORMS(y)
+#     else:
+#         raise NotImplementedError
 
-    if save_results:
-        os.makedirs(save_dir, exist_ok=True)
-        audio_name = os.path.basename(audio_path).split('.')[0]
-        np.save(P.join(save_dir, audio_name + '_mel.npy'), mel_spec)
-        np.save(P.join(save_dir, audio_name + '_audio.npy'), y)
-    else:
-        return y, mel_spec
+#     if save_results:
+#         os.makedirs(save_dir, exist_ok=True)
+#         audio_name = os.path.basename(audio_path).split('.')[0]
+#         np.save(P.join(save_dir, audio_name + '_mel.npy'), mel_spec)
+#         np.save(P.join(save_dir, audio_name + '_audio.npy'), y)
+#     else:
+    mel_spec = TRANSFORMS(y)    
+    return y, mel_spec
 
 
 if __name__ == '__main__':
