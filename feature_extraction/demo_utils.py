@@ -26,7 +26,7 @@ from sample_visualization import (load_feature_extractor,
 # from specvqgan.models.cond_transformer import disabled_train
 # from train import instantiate_from_config
 
-from feature_extraction.extract_mel_spectrogram import get_spectrogram
+from feature_extraction.extract_mel_spectrogram import get_spectrogram, get_spectrum
 
 plt.rcParams['savefig.bbox'] = 'tight'
 
@@ -305,14 +305,11 @@ def extract_melspectrogram(in_path: str, sr: int, duration: int = 10, tmp_path: 
         audio_raw = os.path.join(tmp_path, f'{Path(in_path).stem}.wav')
         cmd = f'{which_ffmpeg()} -i {in_path} -hide_banner -loglevel panic -f wav -vn -y {audio_raw}'
         subprocess.call(cmd.split())
-
-    # Extract audio from a video
-    audio_new = os.path.join(tmp_path, f'_{Path(in_path).stem}.wav')
-    cmd = f'{which_ffmpeg()} -i {audio_raw} -hide_banner -loglevel panic -ac 1 -ab 16k -ar {sr} -y {audio_new}'
-    subprocess.call(cmd.split())
-
+        
+def extract_spectrogram(in_path: str, sr: int) -> np.ndarray:
+    '''Extract Melspectrogram similar to RegNet.'''
     length = int(duration * sr)
-    audio_zero_pad, spec = get_spectrogram(audio_new, save_dir=None, length=length, save_results=False)
+    audio_zero_pad, spec = get_spectrum(in_path, length=length)
 
     # specvqgan expects inputs to be in [-1, 1] but spectrograms are in [0, 1]
     spec = 2 * spec - 1
