@@ -188,6 +188,19 @@ def get_spectrogram(audio_path, save_dir, length, folder_name='melspec_10s_22050
     return y, mel_spec
 
 
+def get_spectrum(audio_path, length):
+    wav, _ = librosa.load(audio_path, sr=None)
+    # this cannot be a transform without creating a huge overhead with inserting audio_name in each
+    y = np.zeros(length)
+    if wav.shape[0] < length:
+        y[:len(wav)] = wav
+    else:
+        y = wav[:length]
+
+    mel_spec = TRANSFORMS(y)
+    mel_spec = 2 * mel_spec - 1    
+    return mel_spec
+
 if __name__ == '__main__':
     paser = argparse.ArgumentParser()
     paser.add_argument("-i", "--input_dir", default="data/features/dog/audio_10s_22050hz")
